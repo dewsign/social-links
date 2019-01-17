@@ -11,6 +11,7 @@ use Laravel\Nova\Fields\Select;
 use Laravel\Nova\Fields\BelongsTo;
 use Laravel\Nova\Http\Requests\NovaRequest;
 use Dewsign\NovaRepeaterBlocks\Models\Repeater;
+use Laravel\Nova\Fields\MorphTo;
 
 class SocialLink extends Resource
 {
@@ -22,11 +23,14 @@ class SocialLink extends Resource
     public static $model = 'Dewsign\SocialLinks\SocialLink';
 
     /**
-     * The single value that should be used to represent the resource when being displayed.
+     * Get the value that should be displayed to represent the resource.
      *
-     * @var string
+     * @return string
      */
-    public static $title = 'id';
+    public function title()
+    {
+        return "{$this->icon} ({$this->link})";
+    }
 
     /**
      * The columns that should be searched.
@@ -34,7 +38,8 @@ class SocialLink extends Resource
      * @var array
      */
     public static $search = [
-        'id',
+        'link',
+        'icon'
     ];
 
     public static $displayInNavigation = false;
@@ -61,6 +66,7 @@ class SocialLink extends Resource
 
         return [
             ID::make()->sortable(),
+            MorphTo::make('Sociable')->onlyOnDetail(),
             Select::make('Icon')
                 ->options($options)
                 ->displayUsingLabels()
